@@ -4,6 +4,10 @@ Web estática (carpeta `docs/`, lista para GitHub Pages) que explica el sistema 
 
 Vista previa: configuración «electoral» de `C:\claude\.claude\launch.json` (puerto 8771).
 
+## Datos por provincia
+
+`py scripts/datos.py <carpeta_cache>` baja las 52 circunscripciones de Wikipedia y genera `docs/datos.js` (votos de 2023, VOX en 2019, habitantes 2024 y posición en el mapa). Comprueba que D'Hondt con la barrera del 3 % da los mismos escaños que la realidad; si no, para.
+
 ## De dónde sale cada cifra
 
 Resultados oficiales del Ministerio del Interior tal como los recoge Wikipedia (páginas «Results of the … Spanish Congress election» y de cada circunscripción). La descarga directa de infoelectoral.interior.gob.es corta la conexión a los scripts.
