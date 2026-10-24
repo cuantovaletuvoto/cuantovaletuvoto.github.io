@@ -47,6 +47,29 @@
     return `<span class="puntos" style="--c:${color(c)}">${h}</span>`;
   }
 
+  /* ---------- Asientos de los simuladores ---------- */
+  // Cada asiento conserva su sitio; solo cambia el que pasa a otro partido
+  function recolocar(antes, por, partidos) {
+    const quedan = new Map(por);
+    const lista = antes.map(p => {
+      if (p && quedan.get(p) > 0) { quedan.set(p, quedan.get(p) - 1); return p; }
+      return null;
+    });
+    const extra = [];
+    partidos.forEach(p => { for (let i = 0; i < quedan.get(p); i++) extra.push(p); });
+    return lista.map(p => p || extra.shift());
+  }
+  function pintarAsientos(circulos, lista, antes, marcado) {
+    circulos.forEach((c, i) => {
+      const p = lista[i];
+      c.style.setProperty('--c', color(p.c));
+      c.classList.toggle('ultimo', i === marcado);
+      if (antes[i] && antes[i] !== p) {
+        c.classList.remove('cambia'); void c.offsetWidth; c.classList.add('cambia');
+      }
+    });
+  }
+
   /* ---------- Aparición al hacer scroll ---------- */
   const visor = 'IntersectionObserver' in window && !quieto
     ? new IntersectionObserver(entradas => {
@@ -79,11 +102,27 @@
   const barra = $('#barra');
   const progreso = $('#progreso');
   const portada = $('.portada');
+  const capitulos = $$('.capitulo');
+  const indice = $('#indice');
+  const enlaces = $$('a', indice);
+  let activo = null;
   function alDesplazar() {
     const y = scrollY;
     barra.classList.toggle('solida', y > portada.offsetHeight - 100);
     const max = document.documentElement.scrollHeight - innerHeight;
     progreso.style.setProperty('--p', max > 0 ? Math.min(1, y / max) : 0);
+    // Apartado en pantalla: el último cuyo inicio ya ha pasado bajo la barra
+    let actual = null;
+    capitulos.forEach(c => { if (c.offsetTop <= y + 140) actual = c.id; });
+    if (actual !== activo) {
+      activo = actual;
+      enlaces.forEach(a => {
+        const on = a.hash === '#' + actual;
+        a.classList.toggle('activo', on);
+        // Centrar la pastilla sin usar scrollIntoView, que cortaría el desplazamiento suave de la página
+        if (on) indice.scrollTo({ left: a.offsetLeft - (indice.clientWidth - a.offsetWidth) / 2, behavior: quieto ? 'auto' : 'smooth' });
+      });
+    }
   }
   addEventListener('scroll', alDesplazar, { passive: true });
   alDesplazar();
@@ -99,7 +138,7 @@
   $$('[data-compartir]').forEach(b => b.addEventListener('click', async () => {
     const datos = {
       title: '¿Cuánto vale tu voto?',
-      text: 'En España no todos los votos valen lo mismo. Te lo explican en 2 minutos:',
+      text: 'En España no todos los votos valen lo mismo. Te lo explican paso a paso:',
       url: location.href.split('#')[0],
     };
     try {
@@ -216,24 +255,9 @@
 
       const r = dhondt(partidos, ESCANOS, VALIDOS);
       const voxGana = r.por.get(vox) > 0;
-      // Cada asiento conserva su sitio; solo cambia de color el que pasa a otro partido
-      const quedan = new Map(r.por);
-      const lista = antes.map(p => {
-        if (p && quedan.get(p) > 0) { quedan.set(p, quedan.get(p) - 1); return p; }
-        return null;
-      });
-      const extra = [];
-      partidos.forEach(p => { for (let i = 0; i < quedan.get(p); i++) extra.push(p); });
-      for (let i = 0; i < ESCANOS; i++) if (!lista[i]) lista[i] = extra.shift();
+      const lista = recolocar(antes, r.por, partidos);
       if (idxDisputado < 0) idxDisputado = lista.indexOf(vox);
-      circulos.forEach((c, i) => {
-        const p = lista[i];
-        c.style.setProperty('--c', color(p.c));
-        c.classList.toggle('ultimo', i === idxDisputado);
-        if (antes[i] && antes[i] !== p) {
-          c.classList.remove('cambia'); void c.offsetWidth; c.classList.add('cambia');
-        }
-      });
+      pintarAsientos(circulos, lista, antes, idxDisputado);
       antes = lista;
 
       leyenda.innerHTML = partidos
@@ -264,8 +288,24 @@
     pintar();
   })();
 
-  /* ---------- Senado 2023 ---------- */
+  /* ---------- Senado: ejemplo y resultados de 2023 ---------- */
   (() => {
+    // Ejemplo: A gana por 300 votos; los 4 candidatos más votados son senadores
+    const CANDIDATOS = [
+      { p: 'A', v: 100300 }, { p: 'A', v: 100200 }, { p: 'A', v: 100100 },
+      { p: 'B', v: 100000 }, { p: 'B', v: 99900 }, { p: 'B', v: 99800 },
+      { p: 'C', v: 46000 },
+    ];
+    const COLOR = { A: 'pa', B: 'pb', C: 'pc' };
+    const orden = {};
+    $('#ranking').innerHTML = CANDIDATOS.map((c, i) => {
+      orden[c.p] = (orden[c.p] || 0) + 1;
+      const sale = i < 4;
+      return `<li class="${sale ? 'elegido' : ''}"><span class="quien-sen"><span class="letra" style="--c:${color(COLOR[c.p])}">${c.p}</span>` +
+        `Candidato ${orden[c.p]}${sale ? ' <span class="marca-sen">· Senador</span>' : ''}</span>` +
+        `<span class="votos-sen">${fmt(c.v)}</span></li>`;
+    }).join('');
+
     const ELEGIDOS = 208;
     const datos = [
       { n: 'PP', v: 34.54, s: 120, c: 'pp' },
@@ -274,14 +314,64 @@
       { n: 'VOX', v: 10.64, s: 0, c: 'vox' },
     ];
     const MAX = 60;
-    const cont = $('#senado-graf');
-    cont.innerHTML = datos.map(d => {
+    $('#senado-graf').innerHTML = datos.map(d => {
       const ps = d.s / ELEGIDOS * 100;
       return `<div class="par"><div class="rotulo"><span class="chapa" style="--c:${color(d.c)}"></span>${d.n}</div>` +
         `<div class="linea"><div class="pista"><i style="--v:${d.v / MAX};--c:var(--gris)"></i></div><b>${pct(d.v)} %</b></div>` +
         `<div class="linea"><div class="pista"><i class="${d.s ? '' : 'nada'}" style="--v:${ps / MAX};--c:${color(d.c)}"></i></div>` +
         `<b class="${d.s ? '' : 'cero'}">${d.s ? pct(ps) : '0'} %</b></div></div>`;
     }).join('');
+  })();
+
+  /* ---------- No votar: Albacete si parte del PSOE se queda en casa ---------- */
+  (() => {
+    const ESCANOS = 4;
+    const PSOE0 = 76322;
+    const VALIDOS = 221191;
+    const partidos = [
+      { n: 'PP', v: 88299, c: 'pp' },
+      { n: 'PSOE', v: PSOE0, c: 'psoe' },
+      { n: 'VOX', v: 36750, c: 'vox' },
+      { n: 'Sumar', v: 15834, c: 'sumar' },
+    ];
+    const [, psoe, vox] = partidos;
+    const rango = $('#abst');
+    const salida = $('#abst-out');
+    const caja = $('#casa-asientos');
+    const leyenda = $('#casa-leyenda');
+    const msg = $('#casa-msg');
+    caja.innerHTML = '<i></i>'.repeat(ESCANOS);
+    const circulos = $$('i', caja);
+    let antes = new Array(ESCANOS).fill(null);
+    let disputado = -1;
+
+    const reparto = s => { psoe.v = PSOE0 - s; return dhondt(partidos, ESCANOS, VALIDOS - s); };
+    let lo = 0, hi = PSOE0;
+    while (lo < hi) { const m = (lo + hi) >> 1; if (reparto(m).por.get(vox) > 0) hi = m; else lo = m + 1; }
+    const critico = lo;
+
+    function pintar() {
+      const s = +rango.value;
+      salida.textContent = fmt(s);
+      rango.setAttribute('aria-valuetext', `${fmt(s)} votantes`);
+      const r = reparto(s);
+      const lista = recolocar(antes, r.por, partidos);
+      if (disputado < 0) disputado = lista.lastIndexOf(psoe);
+      pintarAsientos(circulos, lista, antes, disputado);
+      antes = lista;
+      leyenda.innerHTML = partidos.map(p =>
+        `<span><i class="chapa" style="--c:${color(p.c)}"></i>${p.n} <b>${r.por.get(p)}</b></span>`).join('');
+      if (r.por.get(vox) > 0) {
+        msg.innerHTML = `Con solo ${fmt(critico)} votantes del PSOE en casa, su diputado pasa a <b>VOX</b>. ` +
+          `Y VOX no ha ganado ni un voto: sigue con ${fmt(vox.v)}.`;
+      } else if (s === 0) {
+        msg.textContent = 'Con los votos reales: 2 diputados para el PP y 2 para el PSOE.';
+      } else {
+        msg.textContent = `El PSOE aún conserva su segundo diputado, pero cada vez por menos.`;
+      }
+    }
+    rango.addEventListener('input', pintar);
+    pintar();
   })();
 
   /* ---------- Más ejemplos ---------- */
@@ -302,7 +392,7 @@
       {
         anyo: '2019', t: 'De 57 a 10 diputados en seis meses.',
         f: [{ n: 'Cs · abril', v: 4155665, s: 57, c: 'cs' }, { n: 'Cs · noviembre', v: 1650318, s: 10, c: 'cs' }],
-        nota: 'Perdió el 60 % de sus votos, pero el 82 % de sus diputados.',
+        veredicto: [['−60 %', 'de votos', false], ['−82 %', 'de diputados', true]],
       },
     ];
     $('#casos-lista').innerHTML = CASOS.map(k => {
@@ -311,43 +401,41 @@
         k.f.map(x => `<div class="grupo"><div class="cab"><b><span class="chapa" style="--c:${color(x.c)}"></span>${x.n}</b>` +
           `<span>${fmt(x.v)} votos</span></div>` +
           `<div class="pista"><i style="--v:${(x.v / max).toFixed(4)};--c:${color(x.c)}"></i></div>` +
-          `<div class="esc"><strong class="${x.s ? '' : 'cero'}">${x.s}</strong>${x.s ? puntosHTML(x.s, x.c) : '<span class="nota" style="margin:0">ningún diputado</span>'}</div></div>`
+          `<div class="esc"><strong class="${x.s ? '' : 'cero'}">${x.s}</strong>${x.s ? puntosHTML(x.s, x.c) : '<span class="ninguno">ningún diputado</span>'}</div></div>`
         ).join('') +
-        (k.nota ? `<p class="nota">${k.nota}</p>` : '') + '</article>';
+        (k.veredicto ? '<div class="veredicto">' + k.veredicto.map(([b, t, a]) =>
+          `<div><b class="${a ? 'alerta' : ''}">${b}</b><span>${t}</span></div>`).join('') + '</div>' : '') +
+        '</article>';
     }).join('');
     $$('#casos-lista .caso').forEach(observar);
   })();
 
   /* ---------- Hemiciclo: real frente a proporcional (2023) ---------- */
   (() => {
-    // Orden de izquierda a derecha en el hemiciclo
-    const GRUPOS = [
-      { k: 'sumar', n: 'Sumar', c: 'sumar' },
-      { k: 'psoe', n: 'PSOE', c: 'psoe' },
-      { k: 'otros', n: 'Otros', c: 'otros' },
-      { k: 'pp', n: 'PP', c: 'pp' },
-      { k: 'vox', n: 'VOX', c: 'vox' },
-    ];
-    const DETALLE = [
-      { n: 'PP', g: 'pp', real: 137, igual: 120 },
-      { n: 'PSOE', g: 'psoe', real: 121, igual: 115 },
-      { n: 'VOX', g: 'vox', real: 33, igual: 45 },
+    // De izquierda a derecha en el hemiciclo; «g» es el color del bloque
+    const PARTIDOS = [
       { n: 'Sumar', g: 'sumar', real: 31, igual: 45 },
+      { n: 'PSOE', g: 'psoe', real: 121, igual: 115 },
       { n: 'ERC', g: 'otros', real: 7, igual: 6 },
-      { n: 'Junts', g: 'otros', real: 7, igual: 5 },
       { n: 'EH Bildu', g: 'otros', real: 6, igual: 4 },
-      { n: 'PNV', g: 'otros', real: 5, igual: 4 },
       { n: 'BNG', g: 'otros', real: 1, igual: 2 },
+      { n: 'CUP', g: 'otros', real: 0, igual: 1 },
+      { n: 'PACMA', g: 'otros', real: 0, igual: 2 },
+      { n: 'PNV', g: 'otros', real: 5, igual: 4 },
+      { n: 'Junts', g: 'otros', real: 7, igual: 5 },
       { n: 'CC', g: 'otros', real: 1, igual: 1 },
       { n: 'UPN', g: 'otros', real: 1, igual: 0 },
-      { n: 'PACMA', g: 'otros', real: 0, igual: 2 },
-      { n: 'CUP', g: 'otros', real: 0, igual: 1 },
+      { n: 'PP', g: 'pp', real: 137, igual: 120 },
+      { n: 'VOX', g: 'vox', real: 33, igual: 45 },
+    ];
+    const GRUPOS = [
+      { k: 'sumar', n: 'Sumar' }, { k: 'psoe', n: 'PSOE' }, { k: 'otros', n: 'Otros' },
+      { k: 'pp', n: 'PP' }, { k: 'vox', n: 'VOX' },
     ];
     const TOTAL = 350;
-    const suma = (modo, g) => DETALLE.filter(d => d.g === g).reduce((a, d) => a + d[modo], 0);
+    const suma = (modo, g) => PARTIDOS.filter(p => p.g === g).reduce((a, p) => a + p[modo], 0);
 
-    // Posiciones: filas concéntricas con asientos proporcionales al radio,
-    // ordenadas por ángulo para que cada grupo ocupe una cuña.
+    // Posiciones: filas concéntricas con asientos proporcionales al radio, ordenadas por ángulo
     const svg = $('#hemiciclo');
     const CX = 200, CY = 200, R1 = 192, R0 = 78, FILAS = 12;
     const radios = Array.from({ length: FILAS }, (_, i) => R0 + (R1 - R0) * i / (FILAS - 1));
@@ -373,58 +461,111 @@
       svg.appendChild(c);
       return c;
     });
-    const mayoria = document.createElementNS(NS, 'text');
-    mayoria.setAttribute('x', CX); mayoria.setAttribute('y', CY - 8);
-    mayoria.textContent = '350';
+    const centro = document.createElementNS(NS, 'text');
+    centro.setAttribute('x', CX); centro.setAttribute('y', CY - 8);
     const sub = document.createElementNS(NS, 'text');
     sub.setAttribute('x', CX); sub.setAttribute('y', CY + 10);
     sub.setAttribute('class', 'sub');
-    sub.textContent = 'diputados · mayoría: 176';
-    svg.append(mayoria, sub);
+    svg.append(centro, sub);
+
+    // Reparto real: cuñas consecutivas
+    const real = [];
+    PARTIDOS.forEach(p => { for (let i = 0; i < p.real; i++) real.push(p); });
+
+    // Reparto proporcional sin mover a nadie de sitio: cada asiento que un partido pierde
+    // pasa al que lo gana, eligiendo los asientos más cercanos a ese partido.
+    const igual = real.slice();
+    const sobra = new Map(PARTIDOS.map(p => [p, Math.max(0, p.real - p.igual)]));
+    const ganan = PARTIDOS.filter(p => p.igual > p.real).sort((a, b) => (a.igual - a.real) - (b.igual - b.real));
+    for (const g of ganan) {
+      const suyos = real.map((p, i) => (p === g ? i : -1)).filter(i => i >= 0);
+      const hueco = PARTIDOS.slice(0, PARTIDOS.indexOf(g)).reduce((a, p) => a + p.real, 0);
+      const ang = suyos.length
+        ? suyos.reduce((a, i) => a + pts[i].a, 0) / suyos.length
+        : pts[Math.min(hueco, TOTAL - 1)].a;
+      const libres = real.map((_, i) => i).sort((i, j) => Math.abs(pts[i].a - ang) - Math.abs(pts[j].a - ang));
+      let falta = g.igual - g.real;
+      for (const i of libres) {
+        if (!falta) break;
+        const p = igual[i];
+        if (p === real[i] && sobra.get(p) > 0) { sobra.set(p, sobra.get(p) - 1); igual[i] = g; falta--; }
+      }
+    }
+    const cambian = igual.reduce((a, p, i) => a + (p !== real[i]), 0);
 
     const leyenda = $('#hemi-leyenda');
     const tabla = $('#hemi-tabla');
+    const cambiosTxt = $('#hemi-cambios');
     const botones = $$('.segmentos button');
+    let modo = 'real';
+    let foco = null;
 
-    function pintar(modo) {
-      let i = 0;
-      for (const g of GRUPOS) {
-        const n = suma(modo, g.k);
-        for (let j = 0; j < n; j++, i++) {
-          circulos[i].setAttribute('fill', color(g.c));
-          circulos[i].dataset.g = g.n;
-        }
+    function rotuloCentro() {
+      const lista = modo === 'real' ? real : igual;
+      if (foco) {
+        centro.textContent = lista.filter(p => p.n === foco).length;
+        sub.textContent = `diputados de ${foco}`;
+      } else {
+        centro.textContent = TOTAL;
+        sub.textContent = 'diputados · mayoría: 176';
       }
-      leyenda.innerHTML = GRUPOS.map(g =>
-        `<span><i class="chapa" style="--c:${color(g.c)}"></i>${g.n} <b>${suma(modo, g.k)}</b></span>`).join('');
+    }
+
+    function pintar(nuevo) {
+      modo = nuevo;
+      const lista = modo === 'real' ? real : igual;
+      let orden = 0;
+      circulos.forEach((c, i) => {
+        const p = lista[i];
+        c.style.fill = color(p.g);
+        c.dataset.p = p.n;
+        const cambia = modo === 'igual' && p !== real[i];
+        c.classList.toggle('cambia', cambia);
+        if (cambia) c.style.setProperty('--i', orden++);
+      });
+      svg.classList.toggle('atenua', modo === 'igual');
+      cambiosTxt.innerHTML = modo === 'igual'
+        ? `<mark>${cambian} diputados</mark> cambiarían de partido`
+        : 'Así quedó el Congreso en 2023';
+
+      leyenda.innerHTML = GRUPOS.map(g => {
+        const n = suma(modo, g.k);
+        const d = n - suma('real', g.k);
+        const dif = modo === 'igual' && d ? ` <em>(${d > 0 ? '+' : '−'}${Math.abs(d)})</em>` : '';
+        return `<span><i class="chapa" style="--c:${color(g.k)}"></i>${g.n} <b>${n}</b>${dif}</span>`;
+      }).join('');
+
+      const filas = PARTIDOS.slice().sort((a, b) => b.real - a.real || b.igual - a.igual);
       tabla.innerHTML = '<thead><tr><th>Partido</th><th>Real</th><th>Si cada voto<br>valiera igual</th><th>Diferencia</th></tr></thead><tbody>' +
-        DETALLE.map(d => {
+        filas.map(d => {
           const dif = d.igual - d.real;
           const cls = dif > 0 ? 'mas' : dif < 0 ? 'menos' : 'igual';
           const txt = dif > 0 ? `+${dif}` : dif < 0 ? `−${-dif}` : '=';
           return `<tr><td><span class="chapa" style="--c:${color(d.g)}"></span>${d.n}</td>` +
             `<td>${d.real}</td><td>${d.igual}</td><td class="${cls}">${txt}</td></tr>`;
         }).join('') + '</tbody>';
+
       botones.forEach(b => {
         const on = b.dataset.modo === modo;
         b.classList.toggle('activo', on);
         b.setAttribute('aria-pressed', on);
       });
+      rotuloCentro();
     }
     botones.forEach(b => b.addEventListener('click', () => { foco = null; enfocar(null); pintar(b.dataset.modo); }));
-    pintar('real');
 
-    // Al pasar por encima (o tocar) un asiento: se resalta su grupo y el centro muestra sus diputados
-    let foco = null;
-    function enfocar(g) {
-      if (g === foco) return;
-      foco = g;
-      circulos.forEach(c => c.setAttribute('opacity', g && c.dataset.g !== g ? 0.25 : 1));
-      const n = g ? circulos.filter(c => c.dataset.g === g).length : TOTAL;
-      mayoria.textContent = n;
-      sub.textContent = g ? `diputados de ${g}` : 'diputados · mayoría: 176';
+    // Al pasar por encima (o tocar) un asiento: se resalta su partido y el centro muestra sus diputados
+    function enfocar(p) {
+      foco = p;
+      circulos.forEach(c => { c.style.opacity = p ? (c.dataset.p === p ? 1 : 0.2) : ''; });
+      rotuloCentro();
     }
-    svg.addEventListener('pointerover', e => enfocar(e.target.dataset ? e.target.dataset.g || null : null));
+    svg.addEventListener('pointerover', e => {
+      const p = e.target.dataset ? e.target.dataset.p || null : null;
+      if (p !== foco) enfocar(p);
+    });
     svg.addEventListener('pointerleave', () => enfocar(null));
+
+    pintar('real');
   })();
 })();
