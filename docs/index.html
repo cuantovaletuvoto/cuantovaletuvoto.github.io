@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>¿Cuánto vale tu voto?</title>
+<meta name="description" content="Cómo se reparten los diputados en España y por qué no todos los votos valen lo mismo, explicado en dos minutos con resultados reales.">
+<meta property="og:title" content="¿Cuánto vale tu voto?">
+<meta property="og:description" content="Teruel Existe: 19.761 votos, 1 diputado. PACMA: 228.856 votos, 0. Así funciona el sistema electoral español.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#FFD43B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FFD43B'/%3E%3Ccircle cx='11' cy='16' r='5' fill='%230D0D0C'/%3E%3Ccircle cx='22' cy='16' r='4' fill='none' stroke='%230D0D0C' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<header class="barra" id="barra">
+  <a class="marca" href="#arriba">¿Cuánto vale tu voto?</a>
+  <button class="compartir" type="button" data-compartir>Compartir</button>
+  <div class="progreso" id="progreso" aria-hidden="true"></div>
+</header>
+
+<section class="portada" id="arriba">
+  <h1>En España, no todos los votos valen lo mismo.</h1>
+  <div class="duelo">
+    <article class="lado">
+      <p class="quien">Teruel Existe <span>2019</span></p>
+      <p class="cifra" data-contar="19761">19.761</p>
+      <p class="ud">votos</p>
+      <div class="barra-votos"><i style="--v:.0863"></i></div>
+      <p class="resultado"><b class="punto lleno"></b>1 diputado</p>
+    </article>
+    <article class="lado">
+      <p class="quien">PACMA <span>2019</span></p>
+      <p class="cifra" data-contar="228856">228.856</p>
+      <p class="ud">votos</p>
+      <div class="barra-votos"><i style="--v:1"></i></div>
+      <p class="resultado"><b class="punto vacio"></b>0 diputados</p>
+    </article>
+  </div>
+  <p class="remate">Casi 12 veces más votos. <mark>Cero diputados.</mark></p>
+  <p class="seguir-p"><a class="seguir" href="#como">Entiende por qué en 2 minutos <span aria-hidden="true">↓</span></a></p>
+</section>
+
+<main>
+
+<section class="bloque" id="como">
+  <p class="etiqueta"><b>1</b>Cómo funciona</p>
+  <h2 class="grande">Tres reglas lo explican todo.</h2>
+
+  <div class="tarjeta revelar">
+    <p class="paso">1</p>
+    <h3>No hay un recuento: hay 52.</h3>
+    <p class="texto">Cada provincia reparte sus diputados por su cuenta. Los votos que sobran en una no pasan a otra.</p>
+    <div class="filas">
+      <div class="fila"><span class="nombre">Madrid</span><div class="puntos" data-n="37" data-c="tinta"></div><b class="num">37</b></div>
+      <div class="fila"><span class="nombre">Soria</span><div class="puntos" data-n="2" data-c="tinta"></div><b class="num">2</b></div>
+    </div>
+  </div>
+
+  <div class="tarjeta revelar">
+    <p class="paso">2</p>
+    <h3>Las provincias pequeñas tienen premio.</h3>
+    <p class="texto">Todas tienen 2 diputados asegurados, vivan allí 90.000 personas o 7 millones.</p>
+    <p class="mini-tit">Votantes por cada diputado (2023)</p>
+    <div class="barras">
+      <div class="barra-fila"><span class="nombre">Teruel</span><div class="pista"><i style="--v:.251"></i></div><b class="num">35.451</b></div>
+      <div class="barra-fila"><span class="nombre">Madrid</span><div class="pista"><i style="--v:1"></i></div><b class="num">141.204</b></div>
+    </div>
+    <p class="frase">Un voto en Teruel vale <mark>casi 4 veces</mark> más que uno en Madrid.</p>
+  </div>
+
+  <div class="tarjeta revelar">
+    <p class="paso">3</p>
+    <h3>Y dentro de cada provincia, la ley D'Hondt.</h3>
+    <p class="texto">Se dividen los votos de cada partido entre 1, 2, 3… Los diputados son para los números más altos.</p>
+    <div class="dhondt" id="dhondt">
+      <p class="mini-tit">Albacete · elecciones de 2023 · 4 diputados</p>
+      <div class="tabla-scroll"><table id="dh-tabla"></table></div>
+      <div class="acciones">
+        <button class="boton" type="button" id="dh-paso">Repartir el 1.er diputado</button>
+      </div>
+      <p class="mensaje" id="dh-msg" aria-live="polite">Pulsa para repartir los 4 diputados, uno a uno.</p>
+    </div>
+  </div>
+
+  <p class="frase grande-frase">En 29 de las 52 provincias se reparten 5 diputados o menos. Allí, <mark>un 15 % de los votos puede quedarse en nada.</mark></p>
+</section>
+
+<section class="bloque" id="vox">
+  <p class="etiqueta"><b>2</b>El caso VOX</p>
+  <h2 class="grande">600.000 votos menos. <mark>19 diputados menos.</mark></h2>
+
+  <div class="tarjeta revelar">
+    <div class="eleccion">
+      <div class="e-cab"><b>2019</b><span>3.656.979 votos</span><b class="e-n">52</b></div>
+      <div class="puntos grandes" data-n="52" data-c="vox"></div>
+    </div>
+    <div class="eleccion">
+      <div class="e-cab"><b>2023</b><span>3.057.000 votos</span><b class="e-n">33</b></div>
+      <div class="puntos grandes" data-n="33" data-vacios="19" data-c="vox"></div>
+    </div>
+    <div class="cifras-dos">
+      <div><b>−16 %</b><span>de votos</span></div>
+      <div><b class="alerta">−37 %</b><span>de diputados</span></div>
+    </div>
+  </div>
+
+  <p class="texto">¿Por qué? Perdió por poco el último diputado en muchas provincias pequeñas. En 9 se quedó sin ninguno, con estos votos:</p>
+  <ul class="provincias">
+    <li><b>Albacete</b><span>16,6 %</span><em>0</em></li>
+    <li><b>Ávila</b><span>15,4 %</span><em>0</em></li>
+    <li><b>Salamanca</b><span>14,7 %</span><em>0</em></li>
+    <li><b>Segovia</b><span>14,1 %</span><em>0</em></li>
+    <li><b>Cáceres</b><span>13,6 %</span><em>0</em></li>
+    <li><b>Zamora</b><span>13,2 %</span><em>0</em></li>
+    <li><b>León</b><span>12,9 %</span><em>0</em></li>
+    <li><b>Ceuta</b><span>23,3 %</span><em>0</em></li>
+  </ul>
+  <p class="nota">Y también en Santa Cruz de Tenerife.</p>
+  <p class="frase">Si cada voto valiera igual, habría pasado de 55 a 45 diputados: <mark>10 menos, no 19.</mark></p>
+</section>
+
+<section class="bloque" id="dividir">
+  <p class="etiqueta"><b>3</b>Cuando el voto se divide</p>
+  <h2 class="grande">Un partido nuevo puede quitarte el diputado… <mark>y dárselo a otro.</mark></h2>
+  <p class="texto">A Coruña reparte 8 diputados. Imagina que VOX va a ganar el último y se presenta SALF.</p>
+
+  <div class="tarjeta simulador" id="sim">
+    <label class="deslizador" for="salf">
+      <span>Votantes de VOX que se pasan a SALF</span>
+      <output id="salf-out" for="salf">0</output>
+    </label>
+    <input type="range" id="salf" min="0" max="30000" step="500" value="0">
+    <div class="asientos" id="sim-asientos" aria-hidden="true"></div>
+    <p class="leyenda" id="sim-leyenda"></p>
+    <p class="mini-tit">La pelea por el último diputado</p>
+    <div class="barras" id="sim-pelea"></div>
+    <p class="mensaje" id="sim-msg" aria-live="polite"></p>
+  </div>
+  <p class="nota">Escenario inventado para explicar el mecanismo; no es una encuesta. Incluye la barrera mínima del 3 % que exige la ley.</p>
+</section>
+
+<section class="bloque" id="senado">
+  <p class="etiqueta"><b>4</b>El Senado</p>
+  <h2 class="grande">Si quedas tercero, <mark>no existes.</mark></h2>
+
+  <div class="tarjeta revelar">
+    <h3>Cada provincia elige 4 senadores. Tú solo puedes marcar 3.</h3>
+    <p class="texto">Así que el que gana se lleva 3 y el segundo, 1. Da igual que gane por un voto o por un millón.</p>
+    <div class="podio">
+      <div><span class="pos">1.º</span><span class="puntos fijo"><i></i><i></i><i></i></span><b>3</b></div>
+      <div><span class="pos">2.º</span><span class="puntos fijo"><i></i></span><b>1</b></div>
+      <div><span class="pos">3.º</span><span class="puntos fijo"><i class="vacio"></i></span><b>0</b></div>
+    </div>
+  </div>
+
+  <div class="tarjeta revelar">
+    <p class="mini-tit">Senado 2023: votos frente a senadores</p>
+    <p class="clave"><span><i class="m-votos"></i>% de votos</span><span><i class="m-escanos"></i>% de senadores</span></p>
+    <div id="senado-graf" class="pares"></div>
+  </div>
+  <p class="frase">Sumar y VOX: más de 1 de cada 5 votos. <mark>Cero senadores.</mark></p>
+  <p class="nota">208 senadores elegidos en las urnas. Los parlamentos autonómicos designan otros 57.</p>
+</section>
+
+<section class="bloque" id="casos">
+  <p class="etiqueta"><b>5</b>Más ejemplos</p>
+  <h2 class="grande">No es un caso aislado.</h2>
+  <div class="casos" id="casos-lista"></div>
+</section>
+
+<section class="bloque" id="igual">
+  <p class="etiqueta"><b>6</b>¿Y si cada voto valiera igual?</p>
+  <h2 class="grande">El mismo D'Hondt, pero contando <mark>toda España junta.</mark></h2>
+
+  <div class="tarjeta">
+    <div class="segmentos" role="group" aria-label="Qué Congreso ver">
+      <button type="button" class="activo" data-modo="real" aria-pressed="true">Congreso real 2023</button>
+      <button type="button" data-modo="igual" aria-pressed="false">Si cada voto valiera igual</button>
+    </div>
+    <svg id="hemiciclo" class="hemiciclo" viewBox="0 0 400 214" role="img" aria-label="Reparto de los 350 diputados"></svg>
+    <p class="leyenda" id="hemi-leyenda"></p>
+    <table class="comparativa" id="hemi-tabla"></table>
+  </div>
+  <p class="frase">PP y PSOE se llevan 23 diputados de más. <mark>VOX y Sumar, 26 de menos.</mark></p>
+  <p class="texto">D'Hondt no es el único culpable: lo que más deforma es aplicarlo provincia a provincia.</p>
+</section>
+
+<section class="cierre">
+  <p class="grande">Tu voto no es el problema. <mark>Las reglas, sí.</mark></p>
+  <p class="texto">Vienen de la Constitución de 1978 y de la Ley Electoral de 1985. Y las leyes se pueden cambiar.</p>
+  <button class="boton grande-boton" type="button" data-compartir>Compártelo</button>
+</section>
+
+</main>
+
+<footer class="pie">
+  <p><b>Fuentes.</b> Resultados oficiales de las elecciones generales de 2015, 2019 y 2023 (Ministerio del Interior), por provincia, tal como los recoge Wikipedia. Censo electoral de 2023. El reparto «si cada voto valiera igual» aplica D'Hondt a los votos de toda España con 350 diputados y sin barrera. El ejemplo de A Coruña es inventado.</p>
+</footer>
+
+<div class="aviso" id="aviso" role="status"></div>
+<script src="app.js" defer></script>
+</body>
+</html>
