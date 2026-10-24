@@ -21,11 +21,13 @@
   <nav class="indice" id="indice" aria-label="Apartados">
     <a href="#reglas"><b>1</b>Las reglas</a>
     <a href="#vox"><b>2</b>El caso VOX</a>
-    <a href="#dividir"><b>3</b>Voto dividido</a>
-    <a href="#senado"><b>4</b>Senado</a>
-    <a href="#casa"><b>5</b>No votar</a>
-    <a href="#casos"><b>6</b>Más ejemplos</a>
-    <a href="#igual"><b>7</b>Voto igual</a>
+    <a href="#mayorias"><b>3</b>Mayorías</a>
+    <a href="#dividir"><b>4</b>Voto dividido</a>
+    <a href="#senado"><b>5</b>Senado</a>
+    <a href="#casa"><b>6</b>No votar</a>
+    <a href="#listas"><b>7</b>Listas cerradas</a>
+    <a href="#casos"><b>8</b>Más ejemplos</a>
+    <a href="#igual"><b>9</b>Voto igual</a>
   </nav>
   <div class="progreso" id="progreso" aria-hidden="true"></div>
 </header>
@@ -136,9 +138,25 @@
   </div>
 </section>
 
+<section class="capitulo" id="mayorias">
+  <div class="contenido">
+    <p class="cap-cab"><b>3</b><span>Mayorías absolutas</span></p>
+    <h2 class="grande">Gobernar en solitario… <mark>sin la mitad de los votos.</mark></h2>
+    <p class="texto">Con 176 diputados se gobierna sin pactar con nadie. Ha pasado 4 veces, y ningún partido llegó a la mitad de los votos.</p>
+
+    <div class="tarjeta revelar">
+      <p class="clave"><span><i class="m-votos"></i>% de votos</span><span><i class="m-escanos"></i>% de diputados</span><span><i class="m-mitad"></i>la mitad</span></p>
+      <div id="mayorias-graf" class="pares con-mitad"></div>
+    </div>
+
+    <p class="frase">En 2011, el PP sacó el 44,6 % de los votos y gobernó solo: <mark>más de la mitad había votado a otros.</mark></p>
+    <p class="destacado">En 1989 el PSOE se quedó a un diputado de la mayoría absoluta con solo el 39,6 % de los votos.</p>
+  </div>
+</section>
+
 <section class="capitulo" id="dividir">
   <div class="contenido">
-    <p class="cap-cab"><b>3</b><span>El voto dividido</span></p>
+    <p class="cap-cab"><b>4</b><span>El voto dividido</span></p>
     <h2 class="grande">Un partido nuevo puede quitarte el diputado… <mark>y dárselo a otro.</mark></h2>
     <p class="texto">A Coruña reparte 8 diputados. Imagina que VOX va a ganar el último y se presenta SALF.</p>
 
@@ -161,7 +179,7 @@
 
 <section class="capitulo" id="senado">
   <div class="contenido">
-    <p class="cap-cab"><b>4</b><span>El Senado</span></p>
+    <p class="cap-cab"><b>5</b><span>El Senado</span></p>
     <h2 class="grande">Si quedas tercero, <mark>no existes.</mark></h2>
 
     <div class="tarjeta revelar">
@@ -183,7 +201,7 @@
 
 <section class="capitulo" id="casa">
   <div class="contenido">
-    <p class="cap-cab"><b>5</b><span>No votar</span></p>
+    <p class="cap-cab"><b>6</b><span>No votar</span></p>
     <h2 class="grande">Quedarte en casa también decide… <mark>a favor de otros.</mark></h2>
 
     <div class="tarjeta revelar gran-dato">
@@ -227,9 +245,28 @@
   </div>
 </section>
 
+<section class="capitulo" id="listas">
+  <div class="contenido">
+    <p class="cap-cab"><b>7</b><span>Listas cerradas</span></p>
+    <h2 class="grande">Votas una lista. <mark>No eliges a las personas.</mark></h2>
+    <p class="texto">En el Congreso, el partido decide quién va en su lista y en qué orden. Si saca 3 diputados, entran los 3 primeros, te gusten o no.</p>
+
+    <div class="tarjeta" id="papeleta-caja">
+      <p class="sello neutro"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Prueba: toca un nombre para tacharlo</p>
+      <div class="papeleta" id="papeleta">
+        <p class="pap-cab">Elecciones al Congreso<br><b>Partido de ejemplo</b></p>
+        <ol id="pap-lista"></ol>
+        <p class="sello-nulo" aria-hidden="true">NULO</p>
+      </div>
+      <p class="mensaje" id="pap-msg" aria-live="polite"></p>
+    </div>
+    <p class="destacado">Si tachas o marcas un nombre, o cambias el orden, tu voto es nulo. Lo dice la Ley Electoral (artículo 96).</p>
+  </div>
+</section>
+
 <section class="capitulo" id="casos">
   <div class="contenido">
-    <p class="cap-cab"><b>6</b><span>Más ejemplos</span></p>
+    <p class="cap-cab"><b>8</b><span>Más ejemplos</span></p>
     <h2 class="grande">No es un caso aislado.</h2>
     <div class="casos" id="casos-lista"></div>
   </div>
@@ -237,7 +274,7 @@
 
 <section class="capitulo" id="igual">
   <div class="contenido">
-    <p class="cap-cab"><b>7</b><span>Si cada voto valiera igual</span></p>
+    <p class="cap-cab"><b>9</b><span>Si cada voto valiera igual</span></p>
     <h2 class="grande">El mismo D'Hondt, pero contando <mark>toda España junta.</mark></h2>
 
     <div class="tarjeta">
@@ -264,7 +301,7 @@
     <div class="fuentes">
       <h3>De dónde salen los datos</h3>
       <ul>
-        <li><b>Resultados oficiales</b> de las elecciones generales de 2015, 2019 y 2023, del <a href="https://infoelectoral.interior.gob.es/" rel="noopener">Ministerio del Interior</a>, por provincia (recopilados en <a href="https://en.wikipedia.org/wiki/Results_of_the_2023_Spanish_Congress_election" rel="noopener">Wikipedia</a>).</li>
+        <li><b>Resultados oficiales</b> de las elecciones generales desde 1982, del <a href="https://infoelectoral.interior.gob.es/" rel="noopener">Ministerio del Interior</a>, por provincia (recopilados en <a href="https://en.wikipedia.org/wiki/Results_of_the_2023_Spanish_Congress_election" rel="noopener">Wikipedia</a>).</li>
         <li><b>Censo electoral</b> de 2023 para los votantes por diputado.</li>
         <li><b>«Si cada voto valiera igual»</b>: D'Hondt con los votos de toda España, 350 diputados y sin barrera.</li>
         <li><b>A Coruña con SALF</b> es un ejemplo inventado. <b>Albacete</b> sin unos votos del PSOE parte de los votos reales.</li>

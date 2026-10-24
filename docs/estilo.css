@@ -615,6 +615,76 @@ input[type="range"] {
 .par .pista { height: 12px; }
 .par .linea b.cero { color: var(--alerta); }
 
+/* Mayorías: línea del 50 % sobre cada barra (escala de 0 a 60 %) */
+.clave i.m-mitad { width: 2px; height: 14px; border-radius: 0; background: var(--tinta); }
+.con-mitad .pista { position: relative; }
+.con-mitad .pista::after {
+  content: "";
+  position: absolute;
+  left: calc(50 / 60 * 100%);
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: var(--tinta);
+}
+.con-mitad .rotulo span.anyo-may { font-weight: 600; color: var(--tinta-2); margin-left: 4px; }
+
+/* Listas cerradas */
+.sello.neutro { border-color: var(--tinta); color: var(--tinta); }
+.papeleta {
+  position: relative;
+  max-width: 340px;
+  margin: 0 auto;
+  background: #fbfaf5;
+  color: #0d0d0c;
+  border-radius: 6px;
+  padding: 18px 18px 14px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+.pap-cab { margin: 0 0 12px; text-align: center; font-size: 0.85rem; line-height: 1.35; border-bottom: 2px solid #0d0d0c; padding-bottom: 10px; }
+.pap-cab b { font-size: 1.1rem; }
+.papeleta ol { margin: 0; padding: 0; list-style: none; counter-reset: cand; }
+.papeleta li { counter-increment: cand; }
+.papeleta li button {
+  font: inherit;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 4px;
+  border: 0;
+  border-bottom: 1px dashed rgba(13, 13, 12, 0.18);
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.papeleta li button::before { content: counter(cand) "."; width: 1.4em; font-weight: 700; color: #6f6c64; }
+.papeleta li button span { flex: 1; }
+.papeleta li button em { font-style: normal; font-size: 0.75rem; font-weight: 800; background: #ffd43b; padding: 1px 8px; border-radius: 999px; }
+.papeleta li.tachado button span { text-decoration: line-through 2px #d92d20; color: #6f6c64; }
+.papeleta li button:focus-visible { outline: 3px solid #ffd43b; }
+.sello-nulo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: 0;
+  transform: translate(-50%, -50%) rotate(-14deg) scale(1.6);
+  border: 5px solid #d92d20;
+  color: #d92d20;
+  border-radius: 10px;
+  padding: 2px 18px;
+  font-size: 2.6rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.25s cubic-bezier(0.3, 1.5, 0.5, 1);
+  background: rgba(251, 250, 245, 0.75);
+}
+.papeleta.nulo .sello-nulo { opacity: 1; transform: translate(-50%, -50%) rotate(-14deg) scale(1); }
+
 /* No votar */
 .gran-dato { background: var(--tinta); color: var(--fondo); border-color: transparent; }
 .dato-num {
@@ -774,6 +844,7 @@ input[type="range"] {
 @media (min-width: 720px) {
   .tarjeta, .caso { padding: 28px 28px; }
   .casos { grid-template-columns: 1fr 1fr; }
+  .casos .caso:last-child:nth-child(odd) { grid-column: 1 / -1; }
   .provincias { grid-template-columns: repeat(4, 1fr); }
   .lado { padding: 22px 22px 24px; }
   .capitulo { padding: 104px 0 112px; }

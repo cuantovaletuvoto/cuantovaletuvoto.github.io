@@ -288,6 +288,23 @@
     pintar();
   })();
 
+  /* ---------- Mayorías absolutas ---------- */
+  (() => {
+    const MAX = 60;
+    const datos = [
+      { a: 1982, n: 'PSOE', v: 48.11, s: 202, c: 'psoe' },
+      { a: 1986, n: 'PSOE', v: 44.06, s: 184, c: 'psoe' },
+      { a: 2000, n: 'PP', v: 44.52, s: 183, c: 'pp' },
+      { a: 2011, n: 'PP', v: 44.63, s: 186, c: 'pp' },
+    ];
+    $('#mayorias-graf').innerHTML = datos.map(d => {
+      const ps = d.s / 350 * 100;
+      return `<div class="par"><div class="rotulo"><span class="chapa" style="--c:${color(d.c)}"></span>${d.n}<span class="anyo-may">${d.a} · ${d.s} diputados</span></div>` +
+        `<div class="linea"><div class="pista"><i style="--v:${d.v / MAX};--c:var(--gris)"></i></div><b>${pct(d.v)} %</b></div>` +
+        `<div class="linea"><div class="pista"><i style="--v:${ps / MAX};--c:${color(d.c)}"></i></div><b>${pct(ps)} %</b></div></div>`;
+    }).join('');
+  })();
+
   /* ---------- Senado: ejemplo y resultados de 2023 ---------- */
   (() => {
     // Ejemplo: A gana por 300 votos; los 4 candidatos más votados son senadores
@@ -374,6 +391,31 @@
     pintar();
   })();
 
+  /* ---------- Listas cerradas: papeleta que se anula al tachar ---------- */
+  (() => {
+    const NOMBRES = ['Ana García', 'Luis Martín', 'Marta López', 'Javier Ruiz', 'Lucía Sánchez', 'Pablo Gómez', 'Elena Díaz', 'Carlos Moreno'];
+    const ENTRAN = 3;
+    const lista = $('#pap-lista');
+    const papeleta = $('#papeleta');
+    const msg = $('#pap-msg');
+    lista.innerHTML = NOMBRES.map((n, i) =>
+      `<li><button type="button" aria-pressed="false"><span>${n}</span>${i < ENTRAN ? '<em>entra</em>' : ''}</button></li>`).join('');
+    const inicial = `Si este partido saca ${ENTRAN} diputados, entran los ${ENTRAN} primeros. Tú no puedes cambiarlo.`;
+    msg.textContent = inicial;
+    lista.addEventListener('click', e => {
+      const b = e.target.closest('button');
+      if (!b) return;
+      const li = b.parentElement;
+      const on = li.classList.toggle('tachado');
+      b.setAttribute('aria-pressed', on);
+      const nulo = !!$('li.tachado', lista);
+      papeleta.classList.toggle('nulo', nulo);
+      msg.innerHTML = nulo
+        ? 'Has tachado un nombre: <strong>tu voto es nulo</strong> y no cuenta para nada. Toca otra vez para quitar la tachadura.'
+        : inicial;
+    });
+  })();
+
   /* ---------- Más ejemplos ---------- */
   (() => {
     const CASOS = [
@@ -393,6 +435,11 @@
         anyo: '2019', t: 'De 57 a 10 diputados en seis meses.',
         f: [{ n: 'Cs · abril', v: 4155665, s: 57, c: 'cs' }, { n: 'Cs · noviembre', v: 1650318, s: 10, c: 'cs' }],
         veredicto: [['−60 %', 'de votos', false], ['−82 %', 'de diputados', true]],
+      },
+      {
+        anyo: 'Ceuta · 2023', t: 'Un solo diputado: gana uno y el resto, nada.',
+        f: [{ n: 'PP', v: 12918, s: 1, c: 'pp' }, { n: 'PSOE', v: 11332, s: 0, c: 'psoe' }, { n: 'VOX', v: 7752, s: 0, c: 'vox' }],
+        veredicto: [['61 %', 'de los votos de Ceuta no eligió a nadie', true], ['51 %', 'en Melilla, donde pasa lo mismo', true]],
       },
     ];
     $('#casos-lista').innerHTML = CASOS.map(k => {
