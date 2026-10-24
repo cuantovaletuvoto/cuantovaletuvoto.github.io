@@ -15,6 +15,7 @@
 
   const ICONO_SI = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const ICONO_NO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>';
+  const ICONO_AVISO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v9M12 18.5v.5" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>';
   const ICONO_IGUAL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h14M5 15h14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>';
 
   /* ---------- Reparto D'Hondt (art. 163 de la Ley Electoral) ---------- */
@@ -82,7 +83,7 @@
   function veredicto(el, tipo, titulo, detalle) {
     const antes = el.dataset.tipo;
     el.className = 'veredicto' + (tipo ? ' ' + tipo : '');
-    el.innerHTML = `<span class="veredicto-icono">${tipo === 'si' ? ICONO_SI : tipo === 'no' ? ICONO_NO : ICONO_IGUAL}</span><b>${titulo}</b><span>${detalle}</span>`;
+    el.innerHTML = `<span class="veredicto-icono">${tipo === 'si' ? ICONO_SI : tipo === 'no' ? ICONO_NO : tipo === 'ojo' ? ICONO_AVISO : ICONO_IGUAL}</span><b>${titulo}</b><span>${detalle}</span>`;
     if (antes !== undefined && antes !== tipo) { void el.offsetWidth; el.classList.add('cambia'); }
     el.dataset.tipo = tipo;
   }
@@ -292,10 +293,10 @@
     const MAX = partidos[0].v;
     const caja = $('#torres');
     caja.innerHTML = partidos.map(p =>
-      `<div class="torre" style="--c:${color(p.c)}"><div class="torre-sillas"></div>` +
+      `<div class="torre" style="--c:${color(p.c)}">` +
       '<div class="torre-hueco"><div class="torre-col"><b></b></div></div>' +
-      `<span class="torre-nom">${p.n}</span><span class="torre-div"></span></div>`).join('') +
-      '<div class="torres-corte" id="corte"><span></span></div>';
+      `<span class="torre-nom">${p.n}</span><span class="torre-div"></span><div class="torre-sillas"></div></div>`).join('') +
+      '<div class="torres-corte" id="corte"></div>';
     const torres = $$('.torre', caja);
     const corte = $('#corte');
     const btn = $('#turno-btn');
@@ -352,7 +353,6 @@
         const fuera = partidos.map((_, i) => i).filter(i => !escanos[i]).sort((a, b) => cociente(b) - cociente(a))[0];
         const hueco = torres[0].querySelector('.torre-hueco');
         corte.style.top = (hueco.offsetTop + hueco.offsetHeight * (1 - q / MAX)) + 'px';
-        corte.querySelector('span').textContent = `último diputado: ${fmt(q)}`;
         corte.classList.add('ver');
         torres[fuera].classList.add('casi');
         const falta = Math.floor(q) + 1 - partidos[fuera].v;
@@ -428,7 +428,7 @@
       });
       $('#may-v').textContent = v;
       $('#may-d').textContent = dip;
-      veredicto(ver, 'no', `${d.n} ${d.a}: mandó solo`, `Le votaron ${v} de cada 100, menos de la mitad. Pero tuvo ${d.s} de 350 diputados.`);
+      veredicto(ver, 'ojo', `${d.n} ${d.a}: mandó solo`, `Le votaron ${v} de cada 100, menos de la mitad. Pero tuvo ${d.s} de 350 diputados.`);
       $$('button', botones).forEach((b, k) => { b.classList.toggle('activo', k === i); b.setAttribute('aria-pressed', k === i); });
     }
     botones.addEventListener('click', e => { const b = e.target.closest('button'); if (b) pintar(+b.dataset.i); });
@@ -753,6 +753,10 @@
     pts.forEach((b, i) => b.addEventListener('click', () =>
       carrusel.scrollTo({ left: tarjetas[i].offsetLeft - tarjetas[0].offsetLeft, behavior: quieto ? 'auto' : 'smooth' })));
     carrusel.addEventListener('scroll', marcar, { passive: true });
+    $$('[data-mover]').forEach(b => b.addEventListener('click', () => {
+      const i = Math.max(0, Math.min(tarjetas.length - 1, actual() + +b.dataset.mover));
+      carrusel.scrollTo({ left: tarjetas[i].offsetLeft - tarjetas[0].offsetLeft, behavior: quieto ? 'auto' : 'smooth' });
+    }));
     marcar();
   })();
 
@@ -836,6 +840,7 @@
 
     const leyenda = $('#hemi-leyenda');
     const tabla = $('#hemi-tabla');
+    if (matchMedia('(min-width: 1000px)').matches) $('#hemi-detalle').open = true;
     const cambiosTxt = $('#hemi-cambios');
     const botones = $$('#hemi-modo button');
     let modo = 'real';
@@ -844,7 +849,7 @@
     function rotuloCentro() {
       const lista = modo === 'real' ? real : igual;
       centro.textContent = foco ? lista.filter(p => p.n === foco).length : TOTAL;
-      sub.textContent = foco ? `diputados de ${foco}` : 'diputados · mayoría: 176';
+      sub.textContent = foco ? foco : 'diputados';
     }
     function pintar(nuevo) {
       modo = nuevo;

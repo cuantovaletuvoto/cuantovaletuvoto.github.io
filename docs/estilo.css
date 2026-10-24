@@ -515,7 +515,7 @@ mark {
 .alternar.cuatro { grid-template-columns: repeat(4, 1fr); border-radius: 16px; }
 .alternar.cuatro button { border-radius: 12px; padding: 8px 4px; }
 .alternar.cuatro button small { display: block; font-size: 0.75rem; font-weight: 700; opacity: 0.75; }
-.gofres { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0; }
+.gofres { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px auto; max-width: 600px; }
 .gofre-tit { margin: 0 0 8px; font-weight: 900; font-size: 1.05rem; text-align: center; }
 .gofre {
   position: relative;
@@ -614,7 +614,7 @@ mark {
 /* ===== Torres de D'Hondt ===== */
 .torres { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; align-items: end; position: relative; }
 .torre { display: flex; flex-direction: column; align-items: center; gap: 6px; position: relative; z-index: 1; }
-.torre-sillas { display: flex; gap: 4px; min-height: 18px; flex-wrap: wrap; justify-content: center; }
+.torre-sillas { display: flex; gap: 4px; min-height: 18px; flex-wrap: wrap; justify-content: center; margin-top: 2px; }
 .torre-sillas i { width: 18px; height: 18px; border-radius: 50%; background: var(--c); animation: aparecer 0.4s cubic-bezier(0.3, 1.5, 0.5, 1) both; box-shadow: 0 0 0 2px var(--superficie); }
 .torre-hueco { height: 190px; width: 100%; display: flex; align-items: flex-end; justify-content: center; }
 .torre-col {
@@ -644,7 +644,7 @@ mark {
 .torre.alta .torre-col { box-shadow: 0 0 0 3px var(--superficie), 0 0 0 6px var(--amarillo); }
 .torre.casi .torre-col { box-shadow: 0 0 0 3px var(--superficie), 0 0 0 6px var(--alerta); }
 .torre-nom { font-weight: 850; font-size: 0.95rem; }
-.torre-div { font-size: 0.78rem; font-weight: 800; color: var(--tinta-2); background: var(--pista); border-radius: 999px; padding: 1px 8px; }
+.torre-div { white-space: nowrap; font-size: 0.72rem; font-weight: 800; color: var(--tinta-2); background: var(--pista); border-radius: 999px; padding: 1px 8px; }
 .torres-corte {
   position: absolute;
   left: 0;
@@ -657,15 +657,7 @@ mark {
   z-index: 0;
 }
 .torres-corte.ver { opacity: 1; }
-.torres-corte span {
-  position: absolute;
-  right: 0;
-  bottom: 4px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  background: var(--superficie);
-  padding: 0 4px;
-}
+
 .turno { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
 .turno-txt { font-weight: 800; }
 .mensaje { margin: 14px 0 0; font-weight: 700; font-size: 1.02rem; line-height: 1.4; min-height: 2.8em; }
@@ -719,6 +711,8 @@ input[type="range"] { width: 100%; margin: 8px 0 4px; accent-color: var(--c, var
 }
 .veredicto.si { --fondo-v: color-mix(in srgb, var(--bien) 18%, var(--superficie)); }
 .veredicto.no { --fondo-v: var(--alerta); --texto-v: #fff; }
+.veredicto.ojo { --fondo-v: var(--amarillo); --texto-v: var(--negro); }
+.veredicto.ojo .veredicto-icono { background: var(--negro); color: var(--amarillo); }
 .veredicto-icono {
   grid-row: span 2;
   width: 52px;
@@ -894,6 +888,7 @@ input[type="range"] { width: 100%; margin: 8px 0 4px; accent-color: var(--c, var
 }
 .papeleta.nulo .sello-nulo { opacity: 1; transform: translate(-50%, -50%) rotate(-14deg) scale(1); }
 .pista-toca { text-align: center; font-weight: 800; margin: 18px 0 0; }
+@media (min-width: 1000px) { .pista-toca { text-align: left; } .papeleta { max-width: 380px; } }
 
 /* ===== Carrusel de casos ===== */
 .carrusel {
@@ -931,7 +926,20 @@ input[type="range"] { width: 100%; margin: 8px 0 4px; accent-color: var(--c, var
 .caso .esc .ninguno { font-weight: 800; color: var(--alerta); }
 .caso .remate-caso { margin: auto 0 0; padding-top: 16px; font-weight: 850; font-size: 1.05rem; }
 .caso .remate-caso mark { font-weight: 900; }
-.puntitos { display: flex; justify-content: center; gap: 6px; margin-top: 12px; }
+.carrusel-nav { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 12px; }
+.flecha {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--linea);
+  background: var(--superficie);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+.flecha:hover { border-color: var(--tinta); }
+.puntitos { display: flex; justify-content: center; gap: 6px; }
 .puntitos button { width: 8px; height: 8px; border-radius: 4px; border: 0; padding: 0; background: var(--vacio); cursor: pointer; transition: width 0.2s, background-color 0.2s; }
 .puntitos button.activo { width: 22px; background: var(--tinta); }
 .desliza { text-align: center; font-size: 0.88rem; font-weight: 750; color: var(--tinta-2); margin: 6px 0 0; }
@@ -942,7 +950,7 @@ input[type="range"] { width: 100%; margin: 8px 0 4px; accent-color: var(--c, var
 .hemiciclo circle.cambia { stroke-width: 1.6px; animation: latido 0.5s ease-out both; animation-delay: calc(var(--i, 0) * 25ms); }
 .hemiciclo.atenua circle:not(.cambia) { opacity: 0.32; }
 .hemiciclo text { fill: var(--tinta); font-weight: 900; font-size: 34px; text-anchor: middle; letter-spacing: -1px; }
-.hemiciclo .sub { fill: var(--tinta-2); font-size: 12px; font-weight: 650; letter-spacing: 0; }
+.hemiciclo .sub { fill: var(--tinta-2); font-size: 11px; font-weight: 700; letter-spacing: 0; }
 .cambios { margin: 4px 0 0; font-weight: 850; min-height: 1.5em; text-align: center; }
 .comparativa { width: 100%; border-collapse: collapse; margin-top: 16px; font-variant-numeric: tabular-nums; font-size: 0.95rem; }
 .comparativa th { text-align: right; font-size: 0.8rem; color: var(--tinta-2); font-weight: 750; padding: 6px 4px; }
@@ -951,8 +959,8 @@ input[type="range"] { width: 100%; margin: 8px 0 4px; accent-color: var(--c, var
 .comparativa td:first-child { font-weight: 750; }
 .comparativa .mas, .comparativa .menos { font-weight: 850; }
 .comparativa .igual { color: var(--tenue); }
-.ver-tabla { margin-top: 12px; }
-.ver-tabla summary { cursor: pointer; font-weight: 800; padding: 8px 0; }
+.ver-tabla summary { cursor: pointer; font-weight: 850; font-size: 1.05rem; }
+.ver-tabla[open] summary { margin-bottom: 4px; }
 
 /* ===== Resumen final ===== */
 .resumen { background: var(--amarillo); color: var(--negro); padding: 64px 0 72px; }
@@ -1050,5 +1058,6 @@ input[type="range"] { width: 100%; margin: 8px 0 4px; accent-color: var(--c, var
   .iconos .icono-caja svg { grid-row: auto; margin-bottom: 6px; }
   .caso { flex-basis: calc(33.333% - 8px); }
   .papeleta { margin: 0; justify-self: center; }
-  #igual .tarjeta { max-width: 760px; }
+  #igual .dos-col { grid-template-columns: 1.4fr 1fr; }
+  .carrusel { margin: 0; padding: 4px 0 8px; scroll-padding: 0; }
 }
