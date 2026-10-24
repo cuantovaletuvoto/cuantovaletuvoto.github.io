@@ -11,6 +11,7 @@
   const pct = (n, d = 1) => n.toFixed(d).replace('.', ',');
   const color = c => `var(--${c})`;
   const PROVINCIAS = window.PROVINCIAS || [];
+  const PERSONA = '<svg viewBox="0 0 18 26" aria-hidden="true"><circle cx="9" cy="5" r="4.2"/><path d="M2 25v-9a7 7 0 0 1 14 0v9z"/></svg>';
 
   const ICONO_SI = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const ICONO_NO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>';
@@ -202,7 +203,7 @@
       });
       res.classList.remove('misterio');
       res.classList.add('cero');
-      res.innerHTML = '<div><b>0</b><br><span>diputados</span></div>';
+      res.innerHTML = '<b>0</b><span>diputados</span>';
       txt.innerHTML = (acierto ? 'Exacto: ' : 'Pues no: ') + '<mark>ninguno</mark>. Y no es un error. Ahora verás por qué.';
     });
   })();
@@ -233,7 +234,6 @@
       alTocar: p => elegir(p),
     });
 
-    const PERSONA = '<svg viewBox="0 0 18 26" aria-hidden="true"><circle cx="9" cy="5" r="4.2"/><path d="M2 25v-9a7 7 0 0 1 14 0v9z"/></svg>';
     const CADA = 20000;
     function personas(n) {
       let h = '';
@@ -243,34 +243,29 @@
       if (resto > 0.08) h += `<span class="persona" style="width:${(18 * resto).toFixed(1)}px">${PERSONA}</span>`;
       return `<div class="personas">${h}</div>`;
     }
-    const fila = (p, tuya) => `<div class="gente-fila${tuya ? ' tuya' : ''}"><span>${p.n}<small>${fmt(hpd(p))} hab.</small></span>${personas(hpd(p))}</div>`;
+    const fila = (p, tuya) => `<div class="gente-fila${tuya ? ' tuya' : ''}"><span>${p.n}<small>${fmt(hpd(p))}</small></span>${personas(hpd(p))}</div>`;
+    const veces = v => `${pct(v)} veces`;
 
     function pintarFicha() {
       const filas = [];
       let frase;
       if (!sel) {
         filas.push(fila(soria), fila(madrid));
-        frase = `Un voto en Soria vale como <mark>${pct(valor(soria))} votos</mark> en Madrid.`;
+        frase = `Un voto en Soria vale <mark>${veces(valor(soria))}</mark> uno de Madrid.`;
       } else {
         filas.push(fila(sel, true));
         if (sel !== soria) filas.push(fila(soria));
         if (sel !== madrid) filas.push(fila(madrid));
-        if (sel === madrid) frase = `Madrid es donde menos vale un voto. Uno de Soria vale como <mark>${pct(valor(soria))} de los tuyos</mark>.`;
-        else if (sel === soria) frase = `Soria es donde más vale un voto: <mark>como ${pct(valor(soria))} de Madrid</mark>.`;
-        else {
-          const frenteSoria = hpd(sel) / hpd(soria);
-          frase = `Tu voto vale como <mark>${pct(valor(sel))} votos de Madrid</mark>` +
-            (frenteSoria >= 1.15 ? `. Pero uno de Soria vale como ${pct(frenteSoria)} de los tuyos.` : '.');
-        }
+        if (sel === madrid) frase = `Aquí es donde menos vale. Uno de Soria vale <mark>${veces(valor(soria))}</mark> el tuyo.`;
+        else if (sel === soria) frase = `Aquí es donde más vale: <mark>${veces(valor(soria))}</mark> uno de Madrid.`;
+        else frase = `Tu voto vale <mark>${veces(valor(sel))}</mark> uno de Madrid.`;
       }
-      const cab = sel
-        ? `<p class="ficha-nom">${sel.n}</p><p class="ficha-dato">${sel.esc} diputados · 1 por cada ${fmt(hpd(sel))} habitantes</p>`
-        : '<p class="ficha-nom">Soria frente a Madrid</p><p class="ficha-dato">Elige tu provincia para ver la tuya.</p>';
-      ficha.innerHTML = cab +
-        `<p class="mini-tit" style="margin-top:0">Habitantes que hay detrás de cada diputado · cada muñeco, ${fmt(CADA)}</p>` +
+      ficha.innerHTML =
+        `<p class="ficha-nom">${sel ? sel.n : 'Soria y Madrid'}${sel ? `<span>${sel.esc} diputados</span>` : ''}</p>` +
+        `<p class="mini-tit" style="margin-top:0">Habitantes por cada diputado · 1 muñeco = ${fmt(CADA)}</p>` +
         `<div class="gente">${filas.join('')}</div>` +
         `<p class="ficha-frase">${frase}</p>` +
-        '<p class="ficha-dato" style="margin:10px 0 0">¿Por qué? Todas las provincias tienen 2 diputados fijos, vivan allí muchos o pocos.</p>';
+        (sel ? '' : '<p class="ficha-dato" style="margin:8px 0 0">Elige tu provincia arriba o en el mapa.</p>');
     }
     function elegir(p, guardar = true) {
       sel = p;
@@ -309,13 +304,14 @@
     let escanos, turno, ocupado = false;
 
     const cociente = i => partidos[i].v / (escanos[i] + 1);
+    const PARTES = ['votos', 'la mitad', 'un tercio', 'un cuarto', 'un quinto'];
     function dibujar() {
       partidos.forEach((p, i) => {
         const t = torres[i];
         const q = cociente(i);
         t.querySelector('.torre-col').style.setProperty('--h', (q / MAX).toFixed(4));
         t.querySelector('.torre-col b').textContent = fmt(q);
-        t.querySelector('.torre-div').textContent = escanos[i] ? `÷ ${escanos[i] + 1}` : 'votos';
+        t.querySelector('.torre-div').textContent = PARTES[escanos[i]] || `÷ ${escanos[i] + 1}`;
       });
     }
     function empezar() {
@@ -405,27 +401,38 @@
     mostrar(PROVINCIAS.find(p => p.n === 'Albacete'));
   })();
 
-  /* ---------- 3. Mayorías absolutas ---------- */
+  /* ---------- 3. Mayorías absolutas: cuadrículas de 100 ---------- */
   (() => {
-    const MIN = 35, MAX = 60;
-    const x = v => `${((v - MIN) / (MAX - MIN) * 100).toFixed(2)}%`;
     const datos = [
       { a: 1982, n: 'PSOE', v: 48.11, s: 202, c: 'psoe' },
       { a: 1986, n: 'PSOE', v: 44.06, s: 184, c: 'psoe' },
       { a: 2000, n: 'PP', v: 44.52, s: 183, c: 'pp' },
       { a: 2011, n: 'PP', v: 44.63, s: 186, c: 'pp' },
     ];
-    $('#pesas').innerHTML = datos.map(d => {
-      const ps = d.s / 350 * 100;
-      return `<div style="--c:${color(d.c)}"><div class="pesa-cab"><b><span class="chapa"></span>${d.n} · ${d.a}</b>` +
-        `<span>${pct(d.v)} % → <strong>${pct(ps)} %</strong></span></div>` +
-        `<div class="pesa-pista"><span class="pesa-mitad" style="--x:${x(50)}"></span>` +
-        `<span class="pesa-tramo" style="--a:${x(d.v)};--b:${x(ps)}"></span>` +
-        `<span class="pesa-punto votos" style="--x:${x(d.v)}"></span>` +
-        `<span class="pesa-punto dip" style="--a:${x(d.v)};--x:${x(ps)}"></span></div></div>`;
-    }).join('');
-    $('#pesas-eje').innerHTML = [40, 50, 60].map(v =>
-      `<span class="${v === 50 ? 'mitad' : v === MAX ? 'fin' : ''}" style="--x:${x(v)}">${v === 50 ? 'la mitad' : v + ' %'}</span>`).join('');
+    const botones = $('#may-anyo');
+    const gv = $('#gofre-v');
+    const gd = $('#gofre-d');
+    const ver = $('#may-veredicto');
+    botones.innerHTML = datos.map((d, i) => `<button type="button" data-i="${i}">${d.a}<small>${d.n}</small></button>`).join('');
+    const cien = '<i></i>'.repeat(100);
+    gv.innerHTML = cien;
+    gd.innerHTML = cien;
+    $$('i', gv).concat($$('i', gd)).forEach((c, i) => c.style.setProperty('--i', i % 100));
+    function pintar(i) {
+      const d = datos[i];
+      const v = Math.round(d.v);
+      const dip = Math.round(d.s / 350 * 100);
+      [[gv, v], [gd, dip]].forEach(([g, n]) => {
+        g.style.setProperty('--c', color(d.c));
+        $$('i', g).forEach((c, k) => c.classList.toggle('on', k < n));
+      });
+      $('#may-v').textContent = v;
+      $('#may-d').textContent = dip;
+      veredicto(ver, 'no', `${d.n} ${d.a}: mandó solo`, `Le votaron ${v} de cada 100, menos de la mitad. Pero tuvo ${d.s} de 350 diputados.`);
+      $$('button', botones).forEach((b, k) => { b.classList.toggle('activo', k === i); b.setAttribute('aria-pressed', k === i); });
+    }
+    botones.addEventListener('click', e => { const b = e.target.closest('button'); if (b) pintar(+b.dataset.i); });
+    pintar(datos.length - 1);
   })();
 
   /* ---------- 4. La Coruña con SALF (inventado) ---------- */
@@ -520,6 +527,10 @@
     const resultado = $('#esp-resultado');
     const extra = $('#esp-extra');
     const caja = $('#esp');
+    const diez = $('#esp-diez');
+    const pie = $('#esp-pie');
+    diez.innerHTML = `<span>${PERSONA}</span>`.repeat(10);
+    const figuras = $$('span', diez);
     const botones = $$('#esp-modo button');
     let modo = 'vox';
     let ahora = base;
@@ -547,8 +558,12 @@
       const m = MODOS[modo];
       const k = +rango.value;
       caja.style.setProperty('--c', color(m.cA));
-      salida.textContent = pct(k, Number.isInteger(k) ? 0 : 1);
-      pregunta.textContent = `De cada 10 votantes de ${m.de}, se van a ${m.a}`;
+      diez.style.setProperty('--cDe', color(m.cDe));
+      diez.style.setProperty('--cA', color(m.cA));
+      figuras.forEach((x, i) => x.classList.toggle('va', i < k));
+      salida.textContent = k ? `${k} de cada 10` : 'ninguno';
+      pregunta.textContent = `¿Cuántos votantes de ${m.de} se van a ${m.a}?`;
+      pie.innerHTML = `<span><i style="background:var(--alerta)"></i>${m.de} pierde</span><span><i style="background:${color(m.cA)}"></i>${m.a} gana</span>`;
       ahora = PROVINCIAS.map(p => {
         const v = { ...p.v };
         if (v[m.de]) { const x = v[m.de] * k / 10; v[m.de] -= x; v[m.a] = x; }

@@ -33,28 +33,35 @@
 </header>
 
 <section class="portada" id="arriba">
-  <h1>¿Tu voto vale lo mismo que el de los demás?</h1>
-  <div class="reto" id="reto">
-    <div class="reto-fila">
-      <p class="reto-quien" style="margin:0">Teruel Existe <span>· 2019</span></p>
-      <div class="reto-res"><div><b>1</b><br><span>diputado</span></div></div>
-      <p class="reto-votos" style="margin:0">19.761 <small>votos</small></p>
-      <div class="reto-barra"><i style="--v:.0863"></i></div>
+  <div class="portada-in">
+    <div class="portada-txt">
+      <h1>¿Tu voto vale lo mismo que el de los demás?</h1>
+      <p class="portada-sub">Haz la prueba con las elecciones de 2019.</p>
     </div>
-    <div class="reto-fila">
-      <p class="reto-quien" style="margin:0">PACMA <span>· 2019</span></p>
-      <div class="reto-res misterio" id="reto-res"><div><b>?</b><br><span>diputados</span></div></div>
-      <p class="reto-votos" style="margin:0">228.856 <small>votos</small></p>
-      <div class="reto-barra"><i style="--v:1"></i></div>
+    <div class="reto" id="reto">
+      <div class="duelo">
+        <div class="rival">
+          <p class="rival-nom">Teruel Existe</p>
+          <div class="rival-hueco"><i style="--h:.0863"></i></div>
+          <p class="rival-votos"><b>19.761</b> votos</p>
+          <div class="rival-res"><b>1</b><span>diputado</span></div>
+        </div>
+        <div class="rival">
+          <p class="rival-nom">PACMA</p>
+          <div class="rival-hueco"><i style="--h:1"></i></div>
+          <p class="rival-votos"><b>228.856</b> votos</p>
+          <div class="rival-res misterio" id="reto-res"><b>?</b><span>diputados</span></div>
+        </div>
+      </div>
+      <p class="reto-pregunta">PACMA tuvo casi <mark>12 veces más votos</mark>. ¿Cuántos diputados sacó?</p>
+      <div class="reto-opciones" id="reto-opciones">
+        <button type="button" data-n="12">12</button>
+        <button type="button" data-n="5">5</button>
+        <button type="button" data-n="1">1</button>
+        <button type="button" data-n="0">0</button>
+      </div>
+      <p class="reto-veredicto" id="reto-veredicto" aria-live="polite"></p>
     </div>
-    <p class="reto-pregunta">Casi 12 veces más votos. ¿Cuántos diputados sacó PACMA?</p>
-    <div class="reto-opciones" id="reto-opciones">
-      <button type="button" data-n="12">12</button>
-      <button type="button" data-n="5">5</button>
-      <button type="button" data-n="1">1</button>
-      <button type="button" data-n="0">0</button>
-    </div>
-    <p class="reto-veredicto" id="reto-veredicto" aria-live="polite"></p>
   </div>
   <p class="seguir-p"><a class="seguir" href="#reparto">Desliza y verás por qué <span aria-hidden="true">↓</span></a></p>
 </section>
@@ -69,6 +76,8 @@
     <div class="bloque">
       <h3 class="bloque-tit">España no se cuenta entera: se cuenta en 52 trozos.</h3>
       <p class="bajada">Cada provincia reparte sus diputados por su cuenta. El número de cada casilla: los diputados que elige.</p>
+      <div class="dos-col">
+      <div>
       <div class="donde">
         <label for="mi-provincia">¿Dónde votas?</label>
         <select id="mi-provincia"></select>
@@ -76,22 +85,33 @@
       <div class="mapa" id="mapa-valor" role="group" aria-label="Mapa de provincias"></div>
       <p class="mapa-pie"><span>Tu voto vale</span><span class="escala"><i style="background:var(--mapa-1)"></i><i style="background:var(--mapa-2)"></i><i style="background:var(--mapa-3)"></i><i style="background:var(--mapa-4)"></i></span><span>menos → más</span></p>
 
+      </div>
       <div class="tarjeta ficha" id="ficha" aria-live="polite"></div>
+      </div>
     </div>
 
-    <div class="bloque">
-      <h3 class="bloque-tit">Dentro de cada provincia, se reparte por turnos.</h3>
-      <p class="bajada">En cada turno, el diputado es para la torre más alta. Cuando un partido gana uno, su torre se parte: en 2, luego en 3…</p>
-      <div class="tarjeta">
-        <p class="mini-tit" style="margin-top:0">Albacete, 2023 · 4 diputados · votos reales</p>
-        <div class="torres" id="torres"></div>
-        <div class="turno">
-          <span class="turno-txt" id="turno-txt">Turno 1 de 4</span>
-          <button class="boton" type="button" id="turno-btn">Repartir</button>
-        </div>
-        <p class="mensaje" id="turno-msg" aria-live="polite">Toca «Repartir» para dar el primer diputado.</p>
+    <div class="bloque dos-col">
+      <div>
+        <h3 class="bloque-tit">Dentro de cada provincia, se reparte por turnos.</h3>
+        <ol class="pasos">
+          <li>Cada partido es una torre con sus votos.</li>
+          <li>El diputado es para la torre más alta.</li>
+          <li>La torre que gana se parte: a la mitad, luego en tres…</li>
+        </ol>
+        <p class="remate solo-ancho">En una provincia pequeña, <mark>un 15 % de los votos puede no servir para nada.</mark></p>
       </div>
-      <p class="remate">En una provincia pequeña, <mark>un 15 % de los votos puede no servir para nada.</mark></p>
+      <div>
+        <div class="tarjeta">
+          <p class="mini-tit" style="margin-top:0">Albacete, 2023 · 4 diputados · votos reales</p>
+          <div class="torres" id="torres"></div>
+          <div class="turno">
+            <span class="turno-txt" id="turno-txt">Turno 1 de 4</span>
+            <button class="boton" type="button" id="turno-btn">Repartir</button>
+          </div>
+          <p class="mensaje" id="turno-msg" aria-live="polite">Toca «Repartir» para dar el primer diputado.</p>
+        </div>
+        <p class="remate solo-estrecho">En una provincia pequeña, <mark>un 15 % de los votos puede no servir para nada.</mark></p>
+      </div>
     </div>
   </div>
 </section>
@@ -119,9 +139,13 @@
     <div class="bloque">
       <h3 class="bloque-tit">Bajó un poco… y perdió diputados en 17 provincias.</h3>
       <p class="bajada">Toca una provincia para ver qué pasó.</p>
+      <div class="dos-col">
+      <div>
       <div class="mapa" id="mapa-vox" role="group" aria-label="Provincias donde VOX perdió diputados"></div>
       <p class="mapa-pie"><span><i style="background:var(--alerta)"></i>Perdió diputados</span><span><i style="background:repeating-linear-gradient(45deg,var(--pista) 0 3px,var(--superficie) 3px 6px);box-shadow:inset 0 0 0 1px var(--tinta-2)"></i>No se presentó</span></p>
+      </div>
       <div class="tarjeta ficha" id="ficha-vox" aria-live="polite"></div>
+      </div>
     </div>
 
     <p class="remate">Si cada voto valiera igual, habría bajado de 55 a 45. <mark>10 menos, no 19.</mark></p>
@@ -131,17 +155,28 @@
 <!-- 3 -->
 <section class="capitulo" id="mayorias">
   <div class="contenido">
-    <header class="cap-cab"><span class="cap-num" aria-hidden="true">3</span><h2 class="cap-tit">¿Se puede mandar solo sin la mitad de los votos?</h2></header>
-    <p class="remate" style="margin-top:0">Sí. <mark>Las 4 mayorías absolutas fueron así.</mark></p>
-    <p class="bajada" style="margin-top:12px">Con 176 diputados se gobierna sin pactar con nadie. Mira cómo el sistema empuja a cada ganador por encima de la raya.</p>
+    <header class="cap-cab"><span class="cap-num" aria-hidden="true">3</span><h2 class="cap-tit">¿Puede mandar solo un partido al que no ha votado ni la mitad?</h2></header>
+    <p class="bajada">Para mandar sin pactar con nadie hace falta tener más de la mitad de los diputados.</p>
 
-    <div class="tarjeta revelar">
-      <p class="clave"><span><i style="background:var(--gris)"></i>Votos</span><span><i style="background:var(--tinta)"></i>Diputados</span><span><i class="raya"></i>La mitad</span></p>
-      <div class="pesas" id="pesas"></div>
-      <div class="pesas-eje" id="pesas-eje"></div>
+    <div class="tarjeta revelar" id="mayorias-caja">
+      <div class="alternar cuatro" id="may-anyo" role="group" aria-label="Elecciones"></div>
+      <div class="gofres">
+        <div class="gofre-caja">
+          <p class="gofre-tit">Votos</p>
+          <div class="gofre" id="gofre-v" aria-hidden="true"></div>
+          <p class="gofre-num"><b id="may-v"></b> de cada 100 votantes</p>
+        </div>
+        <div class="gofre-caja">
+          <p class="gofre-tit">Diputados</p>
+          <div class="gofre" id="gofre-d" aria-hidden="true"></div>
+          <p class="gofre-num"><b id="may-d"></b> de cada 100 diputados</p>
+        </div>
+      </div>
+      <div class="veredicto no" id="may-veredicto" aria-live="polite"></div>
     </div>
 
-    <p class="destacado">1989: al PSOE le faltó un solo diputado para mandar solo. Tenía el 39,6 % de los votos.</p>
+    <p class="remate">Ha pasado 4 veces. <mark>Ninguna con la mitad de los votos.</mark></p>
+    <p class="destacado">En 1989 al PSOE le faltó un solo diputado para mandar solo. Le había votado el 39,6 %.</p>
   </div>
 </section>
 
@@ -153,15 +188,22 @@
     <div class="bloque">
       <h3 class="bloque-tit">La Coruña: VOX va a por el último diputado… y llega SALF.</h3>
       <div class="tarjeta" id="sim" style="--c:var(--salf)">
+<div class="dos-col">
+        <div>
         <p class="sello inventado"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 7v4.5M8 4.6v.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Ejemplo inventado · 8 diputados</p>
         <div class="veredicto" id="sim-veredicto" aria-live="polite"></div>
         <div class="escenarios" id="sim-escenarios" role="group" aria-label="Votos de SALF"></div>
         <label class="deslizador" for="salf"><span>Votantes de VOX que se pasan a SALF</span><output id="salf-out" for="salf">0</output></label>
         <input type="range" id="salf" min="0" max="30000" step="100" value="0">
+        </div>
+        <div>
+        <p class="mini-tit" style="margin-top:0">Los 8 diputados de La Coruña</p>
         <div class="asientos" id="sim-asientos" aria-hidden="true"></div>
         <p class="leyenda" id="sim-leyenda"></p>
         <p class="mini-tit">La pelea por el último diputado</p>
         <div class="pelea" id="sim-pelea"></div>
+        </div>
+        </div>
       </div>
     </div>
 
@@ -169,16 +211,23 @@
       <h3 class="bloque-tit">Ahora con los votos reales de 2023, en toda España.</h3>
       <p class="bajada">¿Y si una parte de sus votantes se hubiera ido a un partido nuevo?</p>
       <div class="tarjeta" id="esp" style="--c:var(--salf)">
+<div class="dos-col">
+        <div>
         <div class="alternar" id="esp-modo" role="group" aria-label="Qué partido se divide">
           <button type="button" class="activo" data-modo="vox" aria-pressed="true">VOX y SALF</button>
           <button type="button" data-modo="sumar" aria-pressed="false">Sumar y Podemos</button>
         </div>
-        <label class="deslizador" for="esp-rango"><span id="esp-pregunta">De cada 10 votantes de VOX, se van a SALF</span><output id="esp-out" for="esp-rango">1</output></label>
-        <input type="range" id="esp-rango" min="0" max="5" step="0.5" value="1">
+        <label class="deslizador" for="esp-rango"><span id="esp-pregunta">¿Cuántos votantes de VOX se van a SALF?</span><output id="esp-out" for="esp-rango">1 de cada 10</output></label>
+        <div class="diez" id="esp-diez" aria-hidden="true"></div>
+        <input type="range" id="esp-rango" min="0" max="5" step="1" value="1">
         <div class="resultado-esp" id="esp-resultado" aria-live="polite"></div>
         <p class="reparto-extra" id="esp-extra"></p>
+        </div>
+        <div>
         <div class="mapa" id="mapa-esp" role="group" aria-label="Provincias donde cambia el reparto"></div>
-        <p class="mapa-pie"><span><i style="background:var(--alerta)"></i>Pierde diputados</span></p>
+        <p class="mapa-pie" id="esp-pie"></p>
+        </div>
+        </div>
       </div>
     </div>
 
@@ -191,6 +240,7 @@
   <div class="contenido">
     <header class="cap-cab"><span class="cap-num" aria-hidden="true">5</span><h2 class="cap-tit">¿Por qué en el Senado solo ganan dos?</h2></header>
 
+    <div class="dos-col arriba">
     <div class="bloque">
       <h3 class="bloque-tit">Cada provincia elige 4 senadores. Tú solo puedes marcar 3.</h3>
       <p class="bajada">Casi todos marcan a los 3 de su partido. Así, los 3 del ganador son los más votados, y el 4.º es para el segundo.</p>
@@ -209,6 +259,7 @@
       </div>
       <p class="remate">Sumar y VOX: 1 de cada 5 votos. <mark>Cero senadores.</mark></p>
     </div>
+    </div>
   </div>
 </section>
 
@@ -217,6 +268,7 @@
   <div class="contenido">
     <header class="cap-cab"><span class="cap-num" aria-hidden="true">6</span><h2 class="cap-tit">¿Y si no voy a votar?</h2></header>
 
+    <div class="dos-col centro">
     <div class="gran-dato">
       <b>12,5<span>millones</span></b>
       <p>de personas no votaron en 2023. Más que todos los votantes del PP.</p>
@@ -232,6 +284,7 @@
         <div class="asientos" id="casa-asientos" aria-hidden="true"></div>
         <p class="leyenda" id="casa-leyenda"></p>
       </div>
+    </div>
     </div>
 
     <div class="bloque">
@@ -259,15 +312,19 @@
 <section class="capitulo" id="listas">
   <div class="contenido">
     <header class="cap-cab"><span class="cap-num" aria-hidden="true">7</span><h2 class="cap-tit">¿A quién votas de verdad?</h2></header>
+    <div class="dos-col centro">
+    <div>
     <p class="remate" style="margin-top:0">A una lista. <mark>No a personas.</mark></p>
     <p class="bajada" style="margin-top:12px">El partido elige los nombres y el orden. Si saca 3 diputados, entran los 3 primeros. Te gusten o no.</p>
 
+    <p class="pista-toca" id="pap-msg" aria-live="polite">Prueba: toca un nombre para tacharlo.</p>
+    </div>
     <div class="papeleta" id="papeleta">
       <p class="pap-cab">Elecciones al Congreso<br><b>Partido de ejemplo</b></p>
       <ol id="pap-lista"></ol>
       <p class="sello-nulo" aria-hidden="true">NULO</p>
     </div>
-    <p class="pista-toca" id="pap-msg" aria-live="polite">Prueba: toca un nombre para tacharlo.</p>
+    </div>
   </div>
 </section>
 
